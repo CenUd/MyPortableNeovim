@@ -1,6 +1,8 @@
 ## Start Neovim
 Neovim is in the "bin" folder.
 
+
+
 ## Neovim Configuration Files Paths:
 - autoload	Neovim\share\nvim\runtime\autoload
 - $VIM		Neovim\share\nvim
@@ -14,6 +16,7 @@ Placed in the "sysinit.vim"
 <C-n> means	Ctrl+n
 <leader> means	\
 <CR> means	Enter
+See :help key-notation
 
 ## Plugin Manually Install
 Put the plugin folder in 
@@ -27,3 +30,115 @@ call plug#begin('../share/nvim/plugged')
 Plug 'junegunn/vim-easy-align'
 call plug#end()
 ```
+
+## Usage
+
+### Mode
+To normal mode	Esc		Back to normal mode
+To insert mode	a		Insert after
+		i		Insert before
+		A		Insert at current line end
+		I		Insert at current line start
+		o		Insert at current line bottom
+		O		Insert at current line top
+		s		Delete current word and insert
+		cc		Delete current line and insert
+To visual mode	v		Visual mode
+		ctrl+v		Visual mode block
+		V		Visual mode select current line
+To others	ctrl+z		Minimize vim window
+
+### Move
+Move cursor	j/k/h/l		Down, up, left, right
+		w		Next word start (includes symbols)
+		W		Next word start (only alphabets)
+		b		Previous word start (includes symbols)
+		B		Previous word start (only alphabets)
+		e		Next word end (includes symbols)
+		E		Next word end (only alphabets)
+		H		Window top
+		M		Window middle
+		L		Window bottom
+		gg		File start
+		G		File end
+		3G		Go to line 3
+		:3		Go to line 3
+		zt		Scroll current line to top
+		zz		Scroll current line to middle
+		ctrl+u		Scroll 0.5 page up
+		ctrl+d		Scroll 0.5 page down
+		ctrl+b		Scroll 1 page up
+		ctrl+f		Scroll 1 page down
+		^/0		Go to current line start
+		$		Go to current line end
+		%		Go to paired bracket
+		ctrl+o		Previous cursor position
+		ctrl+i		Next cursor position
+		fa		Go to current line alphabet "a"
+		fb		Go to current line alphabet "b"
+		Fa		Go to current line alphabet "a" backward
+		Fb		Go to current line alphabet "b" backward
+
+### Delete
+Delete		dd		Delete current line
+		2dd		Delete 2 lines, include current line
+		:2d		Delete line no.2
+		:3d		Delete line no.3
+		x		Delete 1 character
+		2dl		Delete 2 characters
+		3dl		Delete 3 characters
+		diw		Delete cursor word
+		ciw		Delete curosr word and insert
+		di"		Delete text inside ""
+		ci"		Delete text inside "" and insert
+		dit		Delete text inside html tag
+		cit		Delete text inside html tag and insert
+		D		Delete until current line end
+		C		Delete until current line end and insert
+
+### Undo Redo
+		u		Undo
+		ctrl+r		Redo
+
+### Copy and paste 
+Copy		"*y		Copy to system clipboard
+		yy		Copy current line
+		2yl		Copy 2 characters
+		3yl		Copy 3 characters
+		yiw		Copy current word
+		yi"		Copy text inside ""
+		yit		Copy text inside html tag
+Paste		"+p		Paste from system clipboard
+		2p		Paste 2 times under current line
+		p		Paste under current line
+
+### Search and replace
+Search		*		Search cursor word forward
+		#		Search cursor word backward
+		/abc		Search "abc" forward
+				n for next
+				N for previous
+Replace		ra		Replace cursor character to "a"
+		:%s/abc/def/g	Replace "abc" with "def"
+
+### Windows and tabs
+Tabs		:vs		Split current window left right
+		:vs a.txt	Split window and open "a.txt"
+		:sp		Split current window up down
+		:q		Close current window
+		:tabnew		New tab
+		:tabedit a.txt	Edit file in a new tab
+		gt		Go to next tab
+		gT		Go to previous tab
+
+### Buffers
+Buffers		:buffers	Show using buffers
+		:bn		Go to next buffers
+		:bd		Delete buffer
+
+### Files
+Files		:q		Close file
+		:q!		Close file without saving
+		:e		Refresh current file
+		:e abc.txt	Open "abc.txt" file
+		:v abc.txt	Open "abc.txt" file in read-only mode
