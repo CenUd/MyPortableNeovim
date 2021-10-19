@@ -1,0 +1,29 @@
+## Start Neovim
+Neovim is in the "bin" folder.
+
+## Neovim Configuration Files Paths:
+- autoload	Neovim\share\nvim\runtime\autoload
+- $VIM		Neovim\share\nvim
+- sysinit.vim	Neovim\share\nvim\sysinit.vim
+
+## Portable Neovim Setting
+Use "sysinit.vim" instead of "init.vim"
+
+## Key Remapping
+Placed in the "sysinit.vim"
+<C-n> means	Ctrl+n
+<leader> means	\
+<CR> means	Enter
+
+## Plugin Manually Install
+Put the plugin folder in 
+"Neovim\share\nvim\runtime\pack\vendor\start"
+
+## Using Vim-plug
+1. Download "plug.vim" into "Neovim\share\nvim\runtime\autoload"
+2. Add the following command to the "sysinit.vim"
+```
+call plug#begin('../share/nvim/plugged')
+Plug 'junegunn/vim-easy-align'
+call plug#end()
+```

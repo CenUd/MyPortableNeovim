@@ -1,0 +1,294 @@
+*scrollview.txt*   Plugin that displays interactive vertical scrollbars
+*nvim-scrollview*
+
+Author: Daniel Steinberg - https://www.dannyadam.com
+Web: https://github.com/dstein64/nvim-scrollview
+
+1. Requirements                            |scrollview-requirements|
+2. Installation                            |scrollview-installation|
+3. Usage                                   |scrollview-usage|
+4. Configuration                           |scrollview-configuration|
+5. Issues                                  |scrollview-issues|
+
+|nvim-scrollview| is a plugin that displays interactive vertical scrollbars.
+The plugin is customizable (see |scrollview-configuration|).
+
+============================================================================
+1. Requirements                            *scrollview-requirements*
+
+* `nvim>=0.5`
+* Scrollbar mouse dragging requires mouse support (see |'mouse'|).
+
+============================================================================
+2. Installation                            *scrollview-installation*
+
+Use |packages| or one of the various package managers.
+
+============================================================================
+3. Usage                                   *scrollview-usage*
+
+* |nvim-scrollview| works automatically, displaying interactive scrollbars.
+
+                                           *scrollview-commands*
+* The *:ScrollViewDisable* command disables scrollbars.
+* The *:ScrollViewEnable* command enables scrollbars. This is only necessary
+  if scrollbars have previously been disabled.
+* The *:ScrollViewRefresh* command refreshes the scrollbars. This is relevant
+  when the scrollbars are out-of-sync, which can occur e.g., as a result of
+  some window arrangement actions (see |scrollview-issues|).
+
+                                           *scrollview-mappings*
+The following |<Plug>| mappings are defined for convenience.
+
+* `<Plug>(ScrollViewDisable)`
+* `<Plug>(ScrollViewEnable)`
+* `<Plug>(ScrollViewRefresh)`
+
+The following (experimental) |<Plug>| mappings are defined for customizing
+mouse functionality (see |scrollview-mouse-customization|).
+
+* `<Plug>(ScrollViewLeftMouse)`
+* `<Plug>(ScrollViewMiddleMouse)`
+* `<Plug>(ScrollViewRightMouse)`
+* `<Plug>(ScrollViewX1Mouse)`
+* `<Plug>(ScrollViewX2Mouse)`
+
+============================================================================
+4. Configuration                           *scrollview-configuration*
+
+The following variables can be used to customize the behavior of
+|nvim-scrollview|. Variables can be set at the 1) window, 2) tab, 3) buffer,
+and/or 4) global scope, with that order of precedence (i.e., window variables
+have the highest precedence, and global variables have the lowest).
+
+Configuration Variables ~
+                                           *scrollview_auto_mouse*
+scrollview_auto_mouse  |Boolean| |Number| specifying whether a mapping is
+                       automatically created for mouse support (without
+                       clobbering). Defaults to `1`. Considered only at global
+                       scope, when the plugin is loaded.
+
+scrollview_auto_workarounds                *scrollview_auto_workarounds*
+                       |Boolean| |Number| specifying whether select workarounds
+                       are automatically applied for known |scrollview-issues|
+                       (without clobbering existing customizations). Defaults
+                       to `1`. Considered only at global scope, when the plugin
+                       is loaded.
+
+                                           *scrollview_base*
+scrollview_base        |String| specifying where the scrollbar is anchored.
+                       Possible values are `'left'` or `'right'` for corresponding
+                       window edges, or `'buffer'`. Defaults to `'right'`.
+
+                                           *scrollview_character*
+scrollview_character  |String| specifying a character to display on scrollbars.
+                      Defaults to `''`. Considered only at global scope.
+                      Scrollbar transparency (via |scrollview_winblend|) is not
+                      possible when a scrollbar character is used.
+
+                                           *scrollview_column*
+scrollview_column      |Number| specifying the scrollbar column (relative to
+                       |scrollview_base|). Defaults to `2`. Must be an integer
+                       greater than or equal to `1`.
+
+scrollview_current_only                    *scrollview_current_only*
+                       |Boolean| |Number| specifying whether scrollbars should
+                       only be displayed in the current window. Defaults to `0`.
+                       Considered only at tab and global scopes.
+
+scrollview_excluded_filetypes              *scrollview_excluded_filetypes*
+                       |List| of |String|s specifying optional file types for
+                       which scrollbars should not be displayed. Defaults to
+                       `[]`.
+
+scrollview_hide_on_intersect               *scrollview_hide_on_intersect*
+                      |Boolean| |Number| specifying whether each scrollbar becomes
+                      hidden (not shown) when it would otherwise intersect
+                      with a floating window. Defaults to `0`.
+
+                                           *scrollview_mode*
+scrollview_mode        |String| specifying what the scrollbar position and size
+                       correspond to. See |scrollview-modes| for details on the
+                       available modes. Defaults to `'virtual'`.
+
+                                           *scrollview_on_startup*
+scrollview_on_startup  |Boolean| |Number| specifying whether scrollbars are
+                       enabled on startup. Defaults to `1`. Considered only at
+                       global scope, when the plugin is loaded.
+
+scrollview_refresh_time                    *scrollview_refresh_time*
+                       |Number| specifying the refresh limit. When scrollbar
+                       refreshing takes more than this many milliseconds,
+                       subsequent refreshing will use `simple` |scrollview_mode|.
+                       Defaults to `100`. A value of `-1` corresponds to no limit.
+                       Considered only at global scope. To reset the mode
+                       behavior, set `g:scrollview_refresh_time_exceeded` to `0`.
+
+                                           *scrollview_winblend*
+scrollview_winblend    |Number| specifying the level of transparency for
+                       scrollbars. Defaults to `50`. Must be between `0` (opaque)
+                       and `100` (transparent).
+
+scrollview_zindex                          *scrollview_zindex*
+                       |Number| specifying the scrollbar z-index. Defaults to
+                       `40`.
+
+Configuration Example ~
+                                           *scrollview-configuration-example*
+The variables can be customized in your |init.vim|, as shown in the following
+example.
+ >
+    let g:scrollview_excluded_filetypes = ['nerdtree']
+    let g:scrollview_current_only = 1
+    let g:scrollview_winblend = 75
+    " Position the scrollbar at the 80th character of the buffer
+    let g:scrollview_base = 'buffer'
+    let g:scrollview_column = 80
+
+Scrollview Modes ~
+                                           *scrollview-modes*
+The following modes are available for the |scrollview_mode| configuration setting
+(set as a |string|). Without closed |folds|, both modes work the same way.
+
+Mode       Description
+----       -----------
+`simple`     The scrollbar top position reflects the window's top line number
+           relative to the document's line count. The scrollbar height
+           reflects the size of the window relative to the document's line
+           count. Dragging the scrollbars with the mouse may result in
+           unresponsive scrolling when there are closed folds.
+
+`virtual`    The scrollbar position and height are calculated similarly to the
+           `simple` mode, but line numbers and the document line count are
+           implicitly updated to virtual counterparts that account for closed
+           folds. The scrollbar top position reflects the window's top virtual
+           line number relative to the document's virtual line count. The
+           scrollbar height reflects the size of the window relative to the
+           document's virtual line count.
+
+Color Customization ~
+                                           *scrollview-color-customization*
+The following highlight group can be configured to change |nvim-scrollview|'s
+colors.
+
+Name         Default   Description
+----         -------   -----------
+`ScrollView`   `Visual`    Color for the scrollbar
+
+The highlight groups can be customized in your |init.vim|, as shown in the
+following example.
+ >
+    " Link ScrollView highlight to Pmenu highlight
+    highlight link ScrollView Pmenu
+
+    " Specify custom highlighting for ScrollView
+    highlight ScrollView ctermbg=159 guibg=LightCyan
+
+Mouse Customization (experimental) ~
+                                           *scrollview-mouse-customization*
+When |scrollview_auto_mouse| is set, a |<LeftMouse>| mapping is automatically
+created for interactive mouse support. An existing mapping will not be
+clobbered.
+
+Mappings can be used to manually create mappings for mouse support.
+ >
+    " Add support for dragging scrollbars with the left mouse button
+    nmap <leftmouse> <plug>(ScrollViewLeftMouse)
+    vmap <leftmouse> <plug>(ScrollViewLeftMouse)
+    imap <leftmouse> <plug>(ScrollViewLeftMouse)
+
+    " Add support for dragging scrollbars with the middle mouse button
+    nmap <middlemouse> <plug>(ScrollViewMiddleMouse)
+    vmap <middlemouse> <plug>(ScrollViewMiddleMouse)
+    imap <middlemouse> <plug>(ScrollViewMiddleMouse)
+
+    " Add support for dragging scrollbars with the right mouse button
+    nmap <rightmouse> <plug>(ScrollViewRightMouse)
+    vmap <rightmouse> <plug>(ScrollViewRightMouse)
+    imap <rightmouse> <plug>(ScrollViewRightMouse)
+
+    " Add support for dragging scrollbars with the x1 mouse button
+    nmap <x1mouse> <plug>(ScrollViewX1Mouse)
+    vmap <x1mouse> <plug>(ScrollViewX1Mouse)
+    imap <x1mouse> <plug>(ScrollViewX1Mouse)
+
+    " Add support for dragging scrollbars with the x2 mouse button
+    nmap <x2mouse> <plug>(ScrollViewX2Mouse)
+    vmap <x2mouse> <plug>(ScrollViewX2Mouse)
+    imap <x2mouse> <plug>(ScrollViewX2Mouse)
+
+============================================================================
+5. Issues                                  *scrollview-issues*
+
+Synchronization Issues ~
+                                           *scrollview-synchronization-issues*
+* Scrollbars can become out-of-sync after window arrangement actions that are
+  not followed by a scroll event. For example, this can be seen by starting
+  `nvim`, issuing |:help|, then typing `<ctrl-w>J` to move the help window to
+  the bottom of the screen. This could be resolved if there was an event that
+  is triggered by the window arrangement actions. |:ScrollViewRefresh|, or
+  scrolling can be used to refresh the scrollbars.
+  - Workaround: Remap the problematic key sequences accordingly. >
+    nmap <c-w>H <c-w>H<plug>(ScrollViewRefresh)
+    nmap <c-w>J <c-w>J<plug>(ScrollViewRefresh)
+    nmap <c-w>K <c-w>K<plug>(ScrollViewRefresh)
+    nmap <c-w>L <c-w>L<plug>(ScrollViewRefresh)
+<    This won't resolve the issue in all cases (e.g., when using |:wincmd|).
+
+* Scrollbars become out-of-sync when the mouse wheel is used to scroll a
+  non-current window. This is because the |WinScrolled| event only corresponds
+  to the current window. The scrollbars can be refreshed with
+  |:ScrollViewRefresh|, scrolling, or by changing the current window.
+  - Workaround: Remap the problematic key sequences accordingly. >
+    nmap <scrollwheelup> <scrollwheelup><plug>(ScrollViewRefresh)
+    nmap <scrollwheeldown> <scrollwheeldown><plug>(ScrollViewRefresh)
+
+* Scrollbars become out-of-sync after fold commands when using a
+  |scrollview-mode| that accounts for folds. Because there are no |autocmd-events|
+  for folding, the plugin is unable to refresh the scrollbars.
+  - Workaround: Remap the problematic fold command key sequences accordingly,
+    depending on the fold commands you use. >
+    nmap zo zo<plug>(ScrollViewRefresh)
+    nmap zc zc<plug>(ScrollViewRefresh)
+
+Error Message Issues ~
+                                           *scrollview-error-message-issues*
+* When attempting to close the last window in a tab with |:close| or
+  `<ctrl-w>c`, with the scrollbar displayed, and at least one other tab, the
+  following error is shown: >
+    E5601: Cannot close window, only floating window would remain
+<  Neovim Issue #11440 is the corresponding issue, opened November 23, 2019.
+  - Workaround 1: Use |:quit|, |ZZ|, |ZQ|, or another command that quits the
+    current window (as opposed to a window-closing command).
+  - Workaround 2: Use |:only| or `<ctrl-w>o` on the last window of the tab,
+    which has the side-effect of closing all floating windows (including
+    scrollbars). A subsequent window-closing command works without error.
+  - Workaround 3: Use |:tabclose|.
+  - Workaround 4: Remap the problematic key sequence accordingly. >
+    nnoremap <silent> <c-w>c
+          \ <cmd>silent! ScrollViewDisable<cr>
+          \<cmd>execute "normal! \<c-w>c"<cr>
+          \<cmd>silent! ScrollViewEnable<cr>
+<    This won't resolve the issue in all cases (e.g., when using |:close| or
+    |:wincmd|). |<Plug>| mappings cannot be used, as they require recursive maps,
+    and <c-w>c would infinitely recurse, as its usage on the right-hand-side
+    is not at the beginning (see |recursive_mapping| for details).
+
+* Deleting a buffer with |:bdelete|, when it's the only visible buffer and there
+  are multiple buffers on the buffer list, results in the following error
+  (with duplicate lines, as shown): >
+    E444: Cannot close last window
+    E444: Cannot close last window
+<  The buffer may not be deleted from the buffer list. Neovim Issue #13628 is
+  the corresponding issue, opened December 28, 2020.
+  - Workaround 1: Use |:only| or `<ctrl-w>o`, which has the side-effect of closing
+    all floating windows (including scrollbars). A subsequent |:bdelete| command
+    works without error.
+  - Workaround 2: Create a `Bdelete` command that avoids the issue. >
+    command Bdelete
+          \ silent! ScrollViewDisable
+          \ | bdelete
+          \ | silent! ScrollViewEnable
+
+============================================================================
+ vim:tw=78:ts=4:ft=help:norl:
